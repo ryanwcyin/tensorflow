@@ -22,7 +22,9 @@ limitations under the License.
 namespace tensorflow {
 
 static const char* const kArgOp = FunctionLibraryDefinition::kArgOp;
+static const char* const kDeviceArgOp = FunctionLibraryDefinition::kDeviceArgOp;
 static const char* const kRetOp = FunctionLibraryDefinition::kRetOp;
+static const char* const kDeviceRetOp = FunctionLibraryDefinition::kDeviceRetOp;
 
 class ArgOp : public OpKernel {
  public:
@@ -62,6 +64,8 @@ class RemoteCallOp : public AsyncOpKernel {
 
   void ComputeAsync(OpKernelContext* ctx, DoneCallback done) override;
 
+  string TraceString(OpKernelContext* ctx, bool verbose) override;
+
  private:
   NameAttrList func_;
   DataTypeVector input_dtypes_;
@@ -70,7 +74,7 @@ class RemoteCallOp : public AsyncOpKernel {
   mutex mu_;
   typedef std::pair<string, FunctionLibraryRuntime*> FunctionTarget;
   std::map<FunctionTarget, FunctionLibraryRuntime::Handle> handle_cache_
-      GUARDED_BY(mu_);
+      TF_GUARDED_BY(mu_);
 
   TF_DISALLOW_COPY_AND_ASSIGN(RemoteCallOp);
 };

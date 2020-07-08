@@ -13,8 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifndef TENSORFLOW_PLATFORM_TEST_H_
-#define TENSORFLOW_PLATFORM_TEST_H_
+#ifndef TENSORFLOW_CORE_PLATFORM_TEST_H_
+#define TENSORFLOW_CORE_PLATFORM_TEST_H_
 
 #include <memory>
 #include <vector>
@@ -28,20 +28,23 @@ limitations under the License.
 // (https://github.com/google/googletest) to discourage over-eager use of mocks
 // that lead to cumbersome class hierarchies and tests that might end up not
 // testing real code in important ways.
-#if defined(PLATFORM_GOOGLE) || defined(PLATFORM_GOOGLE_ANDROID)
-#include "tensorflow/core/platform/google/build_config/gunit.h"
-#else
-#include <gtest/gtest.h>
-#endif
+#include <gtest/gtest.h>  // IWYU pragma: export
 
 namespace tensorflow {
 namespace testing {
 
 // Return a temporary directory suitable for temporary testing files.
+//
+// Where possible, consider using Env::LocalTempFilename over this function.
 string TmpDir();
 
 // Returns the path to TensorFlow in the directory containing data
 // dependencies.
+//
+// A better alternative would be making use if
+// tensorflow/core/platform/resource_loader.h:GetDataDependencyFilepath. That
+// function should do the right thing both within and outside of tests allowing
+// avoiding test specific APIs.
 string TensorFlowSrcRoot();
 
 // Return a random number generator seed to use in randomized tests.
@@ -55,4 +58,4 @@ int PickUnusedPortOrDie();
 }  // namespace testing
 }  // namespace tensorflow
 
-#endif  // TENSORFLOW_PLATFORM_TEST_H_
+#endif  // TENSORFLOW_CORE_PLATFORM_TEST_H_

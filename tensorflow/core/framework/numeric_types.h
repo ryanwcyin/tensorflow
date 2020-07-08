@@ -13,8 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifndef TENSORFLOW_FRAMEWORK_NUMERIC_TYPES_H_
-#define TENSORFLOW_FRAMEWORK_NUMERIC_TYPES_H_
+#ifndef TENSORFLOW_CORE_FRAMEWORK_NUMERIC_TYPES_H_
+#define TENSORFLOW_CORE_FRAMEWORK_NUMERIC_TYPES_H_
 
 #include <complex>
 #include "third_party/eigen3/unsupported/Eigen/CXX11/Tensor"
@@ -84,6 +84,25 @@ struct NumTraits<tensorflow::bfloat16>
   }
 };
 
+template <>
+struct NumTraits<tensorflow::tstring> : GenericNumTraits<tensorflow::tstring> {
+  enum {
+    RequireInitialization = 1,
+    ReadCost = HugeCost,
+    AddCost = HugeCost,
+    MulCost = HugeCost
+  };
+
+  static inline int digits10() { return 0; }
+
+ private:
+  static inline tensorflow::tstring epsilon();
+  static inline tensorflow::tstring dummy_precision();
+  static inline tensorflow::tstring lowest();
+  static inline tensorflow::tstring highest();
+  static inline tensorflow::tstring infinity();
+  static inline tensorflow::tstring quiet_NaN();
+};
 
 using ::tensorflow::operator==;
 using ::tensorflow::operator!=;
@@ -122,4 +141,4 @@ struct hash<Eigen::half> {
 }  // namespace std
 #endif  // _MSC_VER
 
-#endif  // TENSORFLOW_FRAMEWORK_NUMERIC_TYPES_H_
+#endif  // TENSORFLOW_CORE_FRAMEWORK_NUMERIC_TYPES_H_

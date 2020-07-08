@@ -23,6 +23,7 @@ import shutil
 
 from tensorflow.python.framework import errors_impl
 from tensorflow.python.framework import ops
+from tensorflow.python.framework import test_util
 from tensorflow.python.platform import test
 from tensorflow.python.training import basic_loops
 from tensorflow.python.training import supervisor
@@ -37,6 +38,7 @@ def _test_dir(test_name):
 
 class BasicTrainLoopTest(test.TestCase):
 
+  @test_util.run_deprecated_v1
   def testBasicTrainLoop(self):
     logdir = _test_dir("basic_train_loop")
     sv = supervisor.Supervisor(logdir=logdir)
@@ -55,6 +57,7 @@ class BasicTrainLoopTest(test.TestCase):
           sv, train_fn, args=(sv, "y"), kwargs={"a": "A"})
       self.assertEqual(3, num_calls[0])
 
+  @test_util.run_deprecated_v1
   def testBasicTrainLoopExceptionAborts(self):
     logdir = _test_dir("basic_train_loop_exception_aborts")
     sv = supervisor.Supervisor(logdir=logdir)
@@ -68,9 +71,10 @@ class BasicTrainLoopTest(test.TestCase):
     train_fn.counter = 0
 
     with ops.Graph().as_default():
-      with self.assertRaisesRegexp(RuntimeError, "Failed"):
+      with self.assertRaisesRegex(RuntimeError, "Failed"):
         basic_loops.basic_train_loop(sv, train_fn)
 
+  @test_util.run_deprecated_v1
   def testBasicTrainLoopRetryOnAborted(self):
     logdir = _test_dir("basic_train_loop_exception_aborts")
     sv = supervisor.Supervisor(logdir=logdir)
@@ -92,9 +96,9 @@ class BasicTrainLoopTest(test.TestCase):
 
     with ops.Graph().as_default():
       aar = AbortAndRetry()
-      with self.assertRaisesRegexp(RuntimeError, "Failed Again"):
+      with self.assertRaisesRegex(RuntimeError, "Failed Again"):
         basic_loops.basic_train_loop(sv, aar.train_fn)
-      self.assertEquals(0, aar.retries_left)
+      self.assertEqual(0, aar.retries_left)
 
 
 if __name__ == "__main__":
